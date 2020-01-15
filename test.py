@@ -110,8 +110,17 @@ class Network(object):
                 losses.append(loss)
                 print('Epoch {:3d} / iter {:3d}, loss = {:.4f}'.
                                  format(epoch_id, iter_id, loss))
-        
         return losses
+    
+    def test(self, test_data):
+        predictions = []
+        x = test_data[:, :-1]
+        y = test_data[:, -1:]
+        for xi in x:
+            p=self.forward(xi)
+            predictions.append(p)
+        return predictions
+
 
 if __name__ == "__main__":
     # 获取数据
@@ -123,11 +132,27 @@ if __name__ == "__main__":
     num_iterations=10000
     # 启动训练
     losses = net.train(x,y, iterations=num_iterations, eta=0.01)
-    # losses = net.train_SGD(train_data, num_epoches=50, batch_size=100, eta=0.1)
-
-    # 画出损失函数的变化趋势
     plot_x = np.arange(num_iterations)
-    # plot_x = np.arange(len(losses))
     plot_y = np.array(losses)
-    plt.plot(plot_x, plot_y)
+    # plt.plot(plot_x, plot_y)
+    # plt.show()
+
+    # losses = net.train_SGD(train_data, num_epoches=50, batch_size=100, eta=0.1)
+    # plot_x = np.arange(len(losses))
+    # plot_y = np.array(losses)
+    # plt.plot(plot_x, plot_y)
+    # plt.show()
+
+    # 测试模型效果
+    predictions=net.test(test_data)
+    test_y=test_data[:, -1:]
+    test_x=np.arange(len(test_data))
+
+    plt.title('Result')
+    plt.plot(plot_x/100, plot_y, color='blue', label='loss')
+    plt.plot(test_x, predictions, color='green', label='predictions')
+    plt.plot(test_x, test_y, color='red', label='testdata_y')
+    plt.legend()
+    plt.xlabel('num')
+    plt.ylabel('price')
     plt.show()
